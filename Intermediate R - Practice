@@ -559,4 +559,3 @@ survivors <- subset(titanic, Survived == 1)
 
 # Calculate average age of survivors
 disaster_date - mean(survivors$Birth, na.rm = TRUE)
-
