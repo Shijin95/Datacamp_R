@@ -1,3 +1,4 @@
+### PART 1 ###
 ### Chapter 1 Importing data from flat files with utils ###
 # read.csv
 # Import swimming_pools.csv: pools
@@ -354,3 +355,6 @@ removeSheet(my_book, sheet = 4)
 
 # Save workbook to "clean.xlsx"
 saveWorkbook(my_book, "clean.xlsx")
+
+### PART 2 ###
+### Chapter 1 Importing data from databases (Part 1) ###
