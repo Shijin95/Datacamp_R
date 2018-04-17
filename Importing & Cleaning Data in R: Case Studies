@@ -370,3 +370,5 @@ cols <- 2:ncol(att5)
 
 # Use sapply to coerce cols to numeric
 att5[, cols] <- sapply(att5[, cols], as.numeric)
+
+
