@@ -1,0 +1,66 @@
+### Chapter 1 A quick refresher ###
+# Writing a function in R
+# Define ratio() function
+ratio <- function(x, y) {
+  # body
+  x / y
+}
+
+# Call ratio() with arguments 3 and 4
+ratio(3, 4)
+
+# Arguments
+# Rewrite the call to follow best practices
+mean(c(1:9, NA), trim = 0.1, na.rm = TRUE)
+
+# Subsetting lists
+# 2nd element in tricky_list
+typeof(tricky_list[[2]])
+
+# Element called x in tricky_list
+typeof(tricky_list[["x"]])
+
+# 2nd element inside the element called x in tricky_list
+typeof(tricky_list[["x"]][[2]])
+
+# Exploring lists
+# Guess where the regression model is stored
+names(tricky_list)
+
+# Use names() and str() on the model element
+names(tricky_list[["model"]])
+str(tricky_list[["model"]])
+
+# Subset the coefficients element
+tricky_list[["model"]][["coefficients"]]
+
+# Subset the wt element
+tricky_list[["model"]][["coefficients"]][["wt"]]
+
+# A safer way to create the sequence
+# Replace the 1:ncol(df) sequence
+for (i in seq_along(df)) {
+  print(median(df[[i]]))
+}
+
+# Change the value of df
+df <- data.frame(NULL)
+
+# Repeat for loop to verify there is no error
+for (i in seq_along(df)) {
+  print(median(df[[i]]))
+}
+
+# Keeping output
+# Create new double vector: output
+output <- vector("double", length = ncol(df))
+
+# Alter the loop
+for (i in seq_along(df)) {
+  # Change code to store result in output
+  print(median(df[[i]]))
+  output[[i]] <- c(median(df[[i]]))
+}
+
+# Print output
+output
