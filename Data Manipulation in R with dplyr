@@ -1,4 +1,4 @@
-### Chapter 1 Introduction to dplyr and tbls ###
+# Chapter 1 Introduction to dplyr and tbls ###
 # Load the dplyr and hflights package
 # Load the dplyr package
 library(dplyr)
@@ -47,7 +47,7 @@ hflights$Code <- lut[hflights$CancellationCode]
 # Glimpse at hflights
 glimpse(hflights)
 
-### Chapter 2 Select and mutate ###
+# Chapter 2 Select and mutate ###
 # Choosing is not losing! The select verb
 # hflights is pre-loaded as a tbl, together with the necessary libraries.
 
@@ -59,6 +59,14 @@ select(hflights, Origin : Cancelled)
 
 # Answer to last question: be concise!
 select(hflights, Year : DayOfWeek, ArrDelay : Diverted)
+
+# dplyr comes with a set of helper functions that can help you select groups of variables inside a select() call:
+# starts_with("X"): every name that starts with "X",
+# ends_with("X"): every name that ends with "X",
+# contains("X"): every name that contains "X",
+# matches("X"): every name that matches "X", where "X" can be a regular expression,
+# num_range("x", 1:5): the variables named x01, x02, x03, x04 and x05,
+# one_of(x): every name that appears in x, which should be a character vector.
 
 # Helper functions for variable selection
 # As usual, hflights is pre-loaded as a tbl, together with the necessary libraries.
@@ -73,3 +81,43 @@ select(hflights, UniqueCarrier, FlightNum, TailNum, Cancelled, CancellationCode)
 select(hflights, ends_with("Time"), ends_with("Delay"))
 
 # Comparison to base R
+# both hflights and dplyr are available
+
+# Finish select call so that ex1d matches ex1r
+ex1r <- hflights[c("TaxiIn", "TaxiOut", "Distance")]
+ex1d <- select(hflights, starts_with("Taxi"), Distance)
+
+# Finish select call so that ex2d matches ex2r
+ex2r <- hflights[c("Year", "Month", "DayOfWeek", "DepTime", "ArrTime")]
+ex2d <- select(hflights, 1:6, -3)
+
+# Finish select call so that ex3d matches ex3r
+ex3r <- hflights[c("TailNum", "TaxiIn", "TaxiOut")]
+ex3d <- select(hflights, starts_with("Taxi"), TailNum)
+
+# Mutating is creating
+# hflights and dplyr are loaded and ready to serve you.
+
+# Add the new variable ActualGroundTime to a copy of hflights and save the result as g1.
+g1 <- mutate(hflights, ActualGroundTime = ActualElapsedTime - AirTime)
+
+# Add the new variable GroundTime to g1. Save the result as g2.
+g2 <- mutate(g1, GroundTime = TaxiIn + TaxiOut)
+
+# Add the new variable AverageSpeed to g2. Save the result as g3.
+g3 <- mutate(g2, AverageSpeed = Distance / AirTime * 60)
+
+# Print out g3
+g3
+
+# Add multiple variables using mutate
+# hflights and dplyr are ready, are you?
+
+# Add a second variable loss_ratio to the dataset: m1
+m1 <- mutate(hflights, loss = ArrDelay - DepDelay, loss_ratio = loss / DepDelay)
+
+# Add the three variables as described in the third instruction: m2
+m2 <- mutate(hflights, TotalTaxi = TaxiIn + TaxiOut, ActualGroundTime = ActualElapsedTime - AirTime, Diff = TotalTaxi - ActualGroundTime)
+
+# Chapter 3 Filter and arrange
+# Logical operators
