@@ -329,9 +329,3 @@ nycflights %>%
     group_by(carrier) %>%
     summarise(n_flights = n(), avg_delay = mean(arr_delay)) %>%
     arrange(avg_delay)
-    
-
-
-
-
-
