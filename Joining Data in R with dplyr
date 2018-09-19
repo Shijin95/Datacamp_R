@@ -57,4 +57,91 @@ artists %>%
     full_join(albums, by = c("album", "band"))
 
 # Chapter 2 Filtering joins and set operations
-## 
+## Apply a semi-join
+# View the output of semi_join()
+artists %>% 
+  semi_join(songs, by = c("first", "last"))
+
+# Create the same result
+artists %>% 
+  right_join(songs, by = c("first", "last")) %>% 
+  filter(!is.na(instrument)) %>% 
+  select(first, last, instrument)
+  
+## Exploring with semi-joins
+albums %>% 
+  # Collect the albums made by a band
+  semi_join(bands, by = "band") %>% 
+  # Count the albums made by a band
+  nrow()
+  
+## Apply an anti-join
+# Return rows of artists that don't have bands info
+artists %>% 
+  anti_join(bands, by = c("first", "last"))
+  
+## Apply another anti-join
+# Check whether album names in labels are mis-entered
+labels %>% 
+    anti_join(albums, by = "album")
+
+## Which filtering join?
+# Determine which key joins labels and songs
+labels
+songs
+
+# Check your understanding
+songs %>% 
+  # Find the rows of songs that match a row in labels
+  semi_join(labels, by = "album") %>% 
+  # Number of matches between labels and songs
+  nrow()
+  
+## How many songs are there?
+aerosmith %>% 
+  # Create the new dataset using a set operation
+  union(greatest_hits) %>% 
+  # Count the total number of songs
+  nrow()
+  
+## Greatest hits
+# Create the new dataset using a set operation
+aerosmith %>% 
+  intersect(greatest_hits)
+  
+## Live! Bootleg songs
+# Select the song names from live
+live_songs <- live %>% select(song)
+
+# Select the song names from greatest_hits
+greatest_songs <- greatest_hits %>% select(song)
+
+# Create the new dataset using a set operation
+live_songs %>% 
+  setdiff(greatest_songs)
+  
+## Multiple operations
+# Select songs from live and greatest_hits
+live_songs <- select(live, song)
+greatest_songs <- select(greatest_hits, song)
+
+# Return the songs that only exist in one dataset
+live_songs %>% 
+    setdiff(greatest_songs) %>% 
+    union(greatest_songs %>% 
+    setdiff(live_songs))
+    
+## Apply setequal
+# Check if same order: definitive and complete
+identical(definitive, complete)
+
+# Check if any order: definitive and complete
+setequal(definitive, complete)
+
+# Songs in definitive but not complete
+setdiff(definitive, complete)
+
+# Songs in complete but not definitive
+setdiff(complete, definitive)
+
+## Apply setequal again
