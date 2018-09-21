@@ -145,3 +145,59 @@ setdiff(definitive, complete)
 setdiff(complete, definitive)
 
 ## Apply setequal again
+# Return songs in definitive that are not in complete
+definitive %>% 
+  setdiff(complete)
+
+# Return songs in complete that are not in definitive
+complete %>% 
+  setdiff(definitive)
+  
+## Comparing albums
+# Check if same order: definitive and union of complete and soundtrack
+complete %>%
+    union(soundtrack) %>%
+    identical(definitive)
+
+# Check if any order: definitive and union of complete and soundtrack
+complete %>%
+    union(soundtrack) %>%
+    setequal(definitive)
+    
+# Chapter 3 Assembling data
+## Which bind?
+# Examine side_one and side_two
+side_one
+side_two
+
+# Bind side_one and side_two into a single dataset
+side_one %>% 
+  bind_rows(side_two)
+
+## Bind rows
+# Examine discography and jimi
+discography
+jimi
+
+jimi %>% 
+  # Bind jimi into a single data frame
+  bind_rows(.id = "album") %>% 
+  # Make a complete data frame
+  left_join(discography)
+  
+## Bind columns
+# Examine hank_years and hank_charts
+hank_years
+hank_charts
+
+hank_years %>% 
+  # Reorder hank_years alphabetically by song title
+  arrange(song) %>% 
+  # Select just the year column
+  select(year) %>% 
+  # Bind the year column
+  bind_cols(hank_charts) %>% 
+  # Arrange the finished dataset
+  arrange(year, song)
+  
+## Make a data frame
