@@ -698,9 +698,3 @@ ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_smooth(method = "lm", se = FALSE)
 
 ## Grouping variables
-
-
-
-
-
-
