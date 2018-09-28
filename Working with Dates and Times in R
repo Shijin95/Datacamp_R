@@ -336,3 +336,193 @@ today() - years(5)
 
 # Subtract a duration of five years from today()
 today() - dyears(5)
+
+## Arithmetic with timespans
+# Time of North American Eclipse 2017
+eclipse_2017 <- ymd_hms("2017-08-21 18:26:40")
+
+# Duration of 29 days, 12 hours, 44 mins and 3 secs
+synodic <- ddays(29) + dhours(12) + dminutes(44) + dseconds(3)
+
+# 223 synodic months
+saros <- synodic * 223
+
+# Add saros to eclipse_2017
+eclipse_2017 + saros
+
+## Generating sequences of datetimes
+# Add a period of 8 hours to today
+today_8am <- today() + hours(8)
+
+# Sequence of two weeks from 1 to 26
+every_two_weeks <- 1:26 * weeks(2)
+
+# Create datetime for every two weeks for a year
+today_8am + every_two_weeks
+
+## The tricky thing about months
+# A sequence of 1 to 12 periods of 1 month
+month_seq <- 1:12 * months(1)
+
+# Add 1 to 12 months to jan_31
+jan_31 + month_seq
+
+# Replace + with %m+%
+jan_31 %m+% month_seq
+
+# Replace + with %m-%
+jan_31 %m-% month_seq
+
+## Examining intervals. Reigns of kings and queens
+# Print monarchs
+ monarchs
+
+# Create an interval for reign
+monarchs <- monarchs %>%
+  mutate(reign = from %--% to) 
+
+# Find the length of reign, and arrange
+monarchs %>%
+  mutate(length = int_length(reign)) %>% 
+  arrange(desc(length)) %>%
+  select(name, length, dominion)
+
+## Comparing intervals and datetimes
+# Print halleys
+halleys
+
+# New column for interval from start to end date
+halleys <- halleys %>% 
+  mutate(visible = start_date %--% end_date)
+
+# The visitation of 1066
+halleys_1066 <- halleys[14,] 
+
+# Monarchs in power on perihelion date
+monarchs %>% 
+  filter(halleys_1066$perihelion_date %within% reign) %>%
+  select(name, from, to, dominion)
+
+# Monarchs whose reign overlaps visible time
+monarchs %>% 
+  filter(int_overlaps(halleys_1066$visible, reign)) %>%
+  select(name, from, to, dominion)
+
+## Converting to durations and periods
+# New columns for duration and period
+monarchs <- monarchs %>%
+  mutate(
+    duration = as.duration(reign),
+    period = as.period(reign)) 
+    
+# Examine results    
+monarchs %>%
+  select(name, duration, period)
+
+# Chapter 4 Problems in practice
+## Setting the timezone
+# Game2: CAN vs NZL in Edmonton
+game2 <- mdy_hm("June 11 2015 19:00")
+
+# Game3: CHN vs NZL in Winnipeg
+game3 <- mdy_hm("June 15 2015 18:30")
+
+# Set the timezone to "America/Edmonton"
+game2_local <- force_tz(game2, tzone = "America/Edmonton")
+game2_local
+
+# Set the timezone to "America/Winnipeg"
+game3_local <- force_tz(game3, tzone = "America/Winnipeg")
+game3_local
+
+# How long does the team have to rest?
+as.period(game2_local %--% game3_local)
+
+## Viewing in a timezone
+# What time is game2_local in NZ?
+with_tz(game2_local, tzone = "Pacific/Auckland")
+
+# What time is game2_local in Corvallis, Oregon?
+with_tz(game2_local, tzone = "America/Los_Angeles")
+
+# What time is game3_local in NZ?
+with_tz(game3_local, tzone = "Pacific/Auckland")
+
+## Timezones in the weather data
+# Examine datetime and date_utc columns
+head(akl_hourly$datetime)
+head(akl_hourly$date_utc)
+  
+# Force datetime to Pacific/Auckland
+akl_hourly <- akl_hourly %>%
+  mutate(
+    datetime = force_tz(datetime, tzone = "Pacific/Auckland"))
+
+# Reexamine datetime
+head(akl_hourly$datetime)
+  
+# Are datetime and date_utc the same moments
+table(akl_hourly$datetime - akl_hourly$date_utc)
+  
+## Times without dates
+# Import auckland hourly data 
+akl_hourly <- read_csv("akl_weather_hourly_2016.csv")
+
+# Examine structure of time column
+str(akl_hourly$time)
+
+# Examine head of time column
+head(akl_hourly$time)
+
+# A plot using just time
+ggplot(akl_hourly, aes(x = time, y = temperature)) +
+  geom_line(aes(group = make_date(year, month, mday)), alpha = 0.2)
+
+## Fast parsing with `fasttime`
+library(microbenchmark)
+library(fasttime)
+
+# Examine structure of dates
+str(dates)
+
+# Use fastPOSIXct() to parse dates
+fastPOSIXct(dates) %>% str()
+
+# Compare speed of fastPOSIXct() to ymd_hms()
+microbenchmark(
+  ymd_hms = ymd_hms(dates),
+  fasttime = fastPOSIXct(dates),
+  times = 20)
+
+## Fast parsing with `lubridate::fast_strptime`
+# Head of dates
+head(dates)
+
+# Parse dates with fast_strptime
+fast_strptime(dates, 
+    format = "%Y-%m-%dT%H:%M:%SZ") %>% str()
+
+# Comparse speed to ymd_hms() and fasttime
+microbenchmark(
+  ymd_hms = ymd_hms(dates),
+  fasttime = fastPOSIXct(dates),
+  fast_strptime = fast_strptime(dates, 
+    format = "%Y-%m-%dT%H:%M:%SZ"),
+  times = 20)
+
+## Outputting pretty dates and times
+# Create a stamp based on "Sep 20 2017"
+date_stamp <- stamp("Sep 20 2017")
+
+# Print date_stamp
+date_stamp
+
+# Call date_stamp on today()
+date_stamp(today())
+
+# Create and call a stamp based on "09/20/2017"
+stamp("09/20/2017")(today())
+
+# Use string finished for stamp()
+stamp(finished)(today())
+
