@@ -1,0 +1,30 @@
+# Chapter 1 Language of data
+## Loading data into R
+# Load data
+data(email50)
+
+# View the structure of the data
+str(email50)
+
+## Identify variable types
+glimpse(email50)
+
+## Filtering based on a factor
+# Subset of emails with big numbers: email50_big
+email50_big <- email50 %>%
+  filter(number == "big")
+
+# Glimpse the subset
+glimpse(email50_big)
+
+## Complete filtering based on a factor
+# Table of the number variable
+table(email50_big$number)
+
+# Drop levels
+email50_big$number <- droplevels(email50_big$number)
+
+# Another table of the number variable
+table(email50_big$number)
+
+## Discretize a different variable
